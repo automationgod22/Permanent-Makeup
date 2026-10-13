@@ -23,10 +23,10 @@ Source: public metadata of the Instagram profile, checked 13 Oct 2026. The profi
 | City: Jersey City | Verified (from display name) | `site.ts` |
 | Services: Nude Blush Lips, Ombré Brows, Eyes, SMP for hairlines & density | Verified (bio) | `src/content/copy.ts` |
 | Bio line "Say goodbye to overplucked brows & fading hairlines", "Be beautiful 24/7" | Verified (bio) | `site.ts` |
-| 12K followers, 345 posts (Oct 2026) | Verified, will go stale | `site.ts` → `instagramStats` |
+| 12K followers, 345 posts (Oct 2026) | Verified, not shown on the site | — |
 | Artist name, street address, phone, email, booking link, hours | **Unknown — empty, hidden on the page** | `site.ts` |
 | Prices, licences/certifications, testimonials, reviews | **Unknown — not shown anywhere** | — |
-| Portfolio photos | **None collected** — empty slots in review mode | `site.ts` → `portfolio` |
+| Portfolio photos | **None collected** — the Work section stays hidden until photos are added | `site.ts` → `portfolio` |
 | What "Eyes" includes (lash enhancement / eyeliner) | **To confirm** | `copy.ts` |
 | Process steps, FAQ, aftercare | General industry guidance, written neutrally; **studio should review** | `copy.ts` |
 
@@ -34,7 +34,7 @@ Anything left empty in `site.ts` doesn't render. Fill a field and it appears aut
 
 ## Review mode
 
-`NEXT_PUBLIC_REVIEW_MODE` is on unless set to `false`. In review mode the page shows dashed "To confirm" notes, empty portfolio slots, a "website preview" line in the footer, and `robots.txt` blocks indexing. Set `NEXT_PUBLIC_REVIEW_MODE=false` for the real launch.
+`NEXT_PUBLIC_REVIEW_MODE` is on unless set to `false`. In review mode the page shows dashed "To confirm" notes, a "website preview" line in the footer, and `robots.txt` blocks indexing. Set `NEXT_PUBLIC_REVIEW_MODE=false` for the real launch.
 
 ## Adding real portfolio images
 
@@ -42,7 +42,7 @@ Anything left empty in `site.ts` doesn't render. Fill a field and it appears aut
 2. Put them in `public/work/` (JPG/WebP, ~1600px long edge is plenty; `next/image` handles resizing and WebP).
 3. Add entries to `portfolio` in `src/content/site.ts` with `alt`, `service`, `stage` (fresh/healed), `credit`, `clientPermission: true`, `width`, `height`.
 
-Only items with `clientPermission: true` render.
+Only items with `clientPermission: true` render. The Work section and its "Work" nav links appear automatically once at least one such photo exists.
 
 ## Booking flow
 
@@ -71,7 +71,7 @@ CLI alternative: `npm i -g vercel && vercel` (preview) then `vercel --prod`.
 ## Design notes
 
 - Concept: brow mapping on liquid pigment. The hero is a live WebGL pigment field (stirs with the cursor, pauses off-screen, static under reduced motion) with the brow-mapping drawing on top.
-- Interactions: line-mask heading reveals, scroll-lit bio quote, services marquee, service explorer (hover/click/arrow keys, 3D tilt image stage, "Ask about…" pre-selects the service in the booking form), scroll-filled process line, count-up Instagram stats, animated FAQ, magnetic buttons, scroll progress bar, Lenis smooth scrolling. All respect `prefers-reduced-motion`.
+- Interactions: line-mask heading reveals, word-rise bio quote (set in Hanken Grotesk), services marquee, service explorer (hover/click/arrow keys, 3D tilt image stage, "Ask about…" pre-selects the service in the booking form), scroll-filled process line, animated FAQ, magnetic buttons, scroll progress bar, Lenis smooth scrolling. All respect `prefers-reduced-motion`.
 - Palette: aubergine ink `#2a1d24` / `#1d1218`, skin `#f2e4dc`, nude lip `#c98b83` / `#a8645e`, taupe `#6e5a52`, mapping red `#d24e63`, porcelain `#fbf7f4`.
 - Type: Italiana (display) + Hanken Grotesk (body), self-hosted from `src/app/fonts` (both SIL Open Font License).
 

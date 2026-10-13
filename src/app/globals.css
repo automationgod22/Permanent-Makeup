@@ -71,6 +71,12 @@ body {
 .is-in .line-mask:nth-child(3) > span { transition-delay: 0.16s; }
 .is-in .line-mask:nth-child(4) > span { transition-delay: 0.24s; }
 
+/* ── Word rise (statement) ───────────────────────────────────────────── */
+.word-rise, .word-rise > span { text-indent: 0; }
+.word-rise { display: inline-block; vertical-align: top; overflow-x: visible; overflow-y: clip; padding-bottom: 0.16em; margin-bottom: -0.16em; }
+.word-rise > span { display: inline-block; transform: translateY(112%); transition: transform 1s var(--ease-out-soft); }
+.is-in .word-rise > span { transform: none; }
+
 .fade-in { opacity: 0; transform: translateY(14px); transition: opacity 0.9s var(--ease-out-soft) 0.2s, transform 0.9s var(--ease-out-soft) 0.2s; }
 .is-in .fade-in, .fade-in.is-in { opacity: 1; transform: none; }
 
@@ -162,7 +168,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .line-mask > span, .fade-in { transform: none; opacity: 1; transition: none; }
+  .line-mask > span, .word-rise > span, .fade-in { transform: none; opacity: 1; transition: none; }
   .map-line { animation: none; stroke-dashoffset: 0; }
   .map-label { animation: none; opacity: 1; }
   .brow-wipe { animation: none; transform: none; }

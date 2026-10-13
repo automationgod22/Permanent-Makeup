@@ -1,6 +1,6 @@
 "use client";
 
-import { createElement, useEffect, useRef, useState } from "react";
+import { createElement, Fragment, useEffect, useRef, useState } from "react";
 
 export function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(false);
@@ -114,85 +114,26 @@ export function Magnetic({ children, strength = 0.28 }: { children: React.ReactN
   );
 }
 
-/** Scroll-linked word reveal: words brighten as the block moves up the screen. */
-export function WordReveal({ text, className = "" }: { text: string; className?: string }) {
-  const ref = useRef<HTMLParagraphElement>(null);
-  const reduced = usePrefersReducedMotion();
+/**
+ * Words rise into place once, when the text scrolls into view, and stay at full
+ * contrast. Words wrap naturally at any width.
+ */
+export function WordRise({ text, className = "" }: { text: string; className?: string }) {
+  const [ref, inView] = useInView<HTMLParagraphElement>(0.3);
   const words = text.split(" ");
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const spans = Array.from(el.querySelectorAll<HTMLSpanElement>("[data-w]"));
-    if (reduced) {
-      spans.forEach((s) => (s.style.opacity = "1"));
-      return;
-    }
-    let raf = 0;
-    const update = () => {
-      raf = 0;
-      const r = el.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const p = Math.min(1, Math.max(0, (vh * 0.9 - r.top) / (vh * 0.55 + r.height * 0.6)));
-      const lit = p * spans.length;
-      spans.forEach((s, i) => {
-        s.style.opacity = String(0.16 + 0.84 * Math.min(1, Math.max(0, lit - i)));
-      });
-    };
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update);
-    };
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      cancelAnimationFrame(raf);
-    };
-  }, [reduced]);
   return (
-    <p ref={ref} className={className}>
+    <p ref={ref} className={`${className} ${inView ? "is-in" : ""}`}>
       <span className="sr-only">{text}</span>
       <span aria-hidden>
         {words.map((w, i) => (
-          <span key={i} data-w className="transition-opacity duration-300" style={{ opacity: 0.16 }}>
-            {w}{" "}
-          </span>
+          <Fragment key={i}>
+            <span className="word-rise">
+              <span style={{ transitionDelay: `${i * 55}ms` }}>{w}</span>
+            </span>
+            {i < words.length - 1 ? " " : ""}
+          </Fragment>
         ))}
       </span>
     </p>
-  );
-}
-
-/** Counts up to a number once visible. Keeps any suffix (e.g. "12K"). */
-export function CountUp({ value, className = "" }: { value: string; className?: string }) {
-  const [ref, inView] = useInView<HTMLSpanElement>(0.5);
-  const match = value.match(/^(\d+)(.*)$/);
-  const target = match ? Number(match[1]) : 0;
-  const suffix = match ? match[2] : "";
-  const hasMatch = Boolean(match);
-  const [n, setN] = useState(0);
-  const reduced = usePrefersReducedMotion();
-  useEffect(() => {
-    if (!inView || !hasMatch || reduced) return;
-    let raf = 0;
-    const start = performance.now();
-    const tick = (t: number) => {
-      const k = Math.min(1, (t - start) / 1600);
-      setN(Math.round(target * (1 - Math.pow(1 - k, 3))));
-      if (k < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [inView, reduced, target, hasMatch]);
-  if (!match) return <span className={className}>{value}</span>;
-  return (
-    <span ref={ref} className={className}>
-      <span aria-hidden>
-        {reduced && inView ? target : n}
-        {suffix}
-      </span>
-      <span className="sr-only">{value}</span>
-    </span>
   );
 }

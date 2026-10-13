@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { site } from "@/content/site";
+import { hasPortfolio, site } from "@/content/site";
 import { Magnetic } from "./motion";
 import { getLenis } from "./SmoothScroll";
 
 const links = [
   { href: "#services", label: "Services" },
   { href: "#process", label: "Process" },
-  { href: "#work", label: "Work" },
+  ...(hasPortfolio ? [{ href: "#work", label: "Work" }] : []),
   { href: "#care", label: "Care" },
   { href: "#faq", label: "FAQ" },
 ];

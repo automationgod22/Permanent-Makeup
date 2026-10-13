@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { aftercare, beforeVisit, services } from "@/content/copy";
-import { portfolio, reviewMode, site } from "@/content/site";
-import { CountUp, FadeIn, Magnetic, RevealHeading, WordReveal } from "./motion";
+import { hasPortfolio, portfolio, reviewMode, site } from "@/content/site";
+import { FadeIn, Magnetic, RevealHeading, WordRise } from "./motion";
 import { ReviewNote } from "./ReviewNote";
 
 const wrap = "mx-auto max-w-[1500px] px-5 sm:px-8 lg:px-12";
@@ -42,12 +42,12 @@ export function Marquee() {
 export function Statement() {
   return (
     <section aria-label="From the studio" className="bg-skin">
-      <div className={`${wrap} py-16 lg:py-24`}>
+      <div className={`${wrap} pb-2 pt-14 lg:pb-4 lg:pt-20`}>
         <figure>
           <blockquote>
-            <WordReveal
+            <WordRise
               text={`“${site.bioLine}.”`}
-              className="display max-w-[16ch] text-[clamp(3rem,8.6vw,8.25rem)] leading-[0.95] text-ink"
+              className="max-w-[17ch] font-sans text-[clamp(2.6rem,6.8vw,6.75rem)] font-semibold leading-[1.02] tracking-[-0.035em] text-ink [text-indent:-0.42em]"
             />
           </blockquote>
           <figcaption className="mt-8 flex items-center gap-4 text-[1.0625rem] text-taupe">
@@ -61,91 +61,40 @@ export function Statement() {
 }
 
 export function Work() {
+  // Hidden until real client photos (with permission) are added in site.ts.
+  if (!hasPortfolio) return null;
   const items = portfolio.filter((p) => p.clientPermission);
-  const hasWork = items.length > 0;
   return (
-    <section id="work" aria-labelledby="work-h" className="grain relative isolate overflow-hidden bg-ink-deep text-skin">
-      <Image src="/art/pigment-dark.webp" alt="" fill sizes="100vw" className="-z-10 scale-x-[-1] object-cover opacity-70" />
-      <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-b from-ink-deep/40 via-ink-deep/60 to-ink-deep" />
+    <section id="work" aria-labelledby="work-h" className="bg-ink-deep text-skin">
       <div className={`${wrap} py-16 lg:py-24`}>
-        <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
-          <div className="lg:col-span-8">
-            <RevealHeading
-              id="work-h"
-              lines={hasWork ? ["Recent work"] : ["See the work", "on Instagram"]}
-              className="display text-[clamp(3.25rem,8vw,7rem)]"
-            />
-            <p className="mt-6 max-w-[44ch] text-[1.1875rem] text-skin/80 lg:text-[1.3125rem]">
-              Fresh and healed results are posted at @{site.handle}. Instagram may ask you to log in to view the profile.
-            </p>
-            <div className="mt-8">
-              <Magnetic>
-                <a href={site.instagramUrl} target="_blank" rel="noopener noreferrer" className="btn btn-skin">
-                  Open @{site.handle}
-                </a>
-              </Magnetic>
-            </div>
-          </div>
-          <dl className="grid grid-cols-2 gap-6 border-t border-skin/15 pt-6 lg:col-span-4">
-            <div>
-              <dt className="text-[0.9375rem] text-skin/60">Posts</dt>
-              <dd className="display mt-1 text-[clamp(3.5rem,7vw,5.5rem)] leading-none">
-                <CountUp value={site.instagramStats.posts} />
-              </dd>
-            </div>
-            <div>
-              <dt className="text-[0.9375rem] text-skin/60">Followers</dt>
-              <dd className="display mt-1 text-[clamp(3.5rem,7vw,5.5rem)] leading-none">
-                <CountUp value={site.instagramStats.followers} />
-              </dd>
-            </div>
-            <p className="col-span-2 text-[0.875rem] text-skin/50">On Instagram as of {site.instagramStats.checked}.</p>
-          </dl>
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <RevealHeading id="work-h" lines={["Recent work"]} className="display text-[clamp(3.25rem,8vw,7rem)]" />
+          <Magnetic>
+            <a href={site.instagramUrl} target="_blank" rel="noopener noreferrer" className="btn btn-ghost-light">
+              More on Instagram
+            </a>
+          </Magnetic>
         </div>
-
-        {hasWork ? (
-          <ul className="mt-12 grid grid-cols-2 gap-3 md:grid-cols-3 lg:gap-4">
-            {items.map((p) => (
-              <li key={p.src}>
-                <figure className="group overflow-hidden">
-                  <Image
-                    src={p.src}
-                    alt={p.alt}
-                    width={p.width}
-                    height={p.height}
-                    sizes="(min-width: 768px) 33vw, 50vw"
-                    className="aspect-[4/5] w-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                  />
-                  <figcaption className="mt-2 text-[0.875rem] text-skin/70">
-                    {p.service}
-                    {p.stage ? `, ${p.stage.toLowerCase()}` : ""}. Photo: {p.credit}
-                  </figcaption>
-                </figure>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          reviewMode && (
-            <FadeIn className="mt-12">
-              <ul className="grid grid-cols-3 gap-2 sm:grid-cols-6 lg:gap-3" aria-label="Empty portfolio slots">
-                {["Ombré brows", "Nude blush lips", "Eyes", "SMP hairline", "SMP density", "Healed result"].map((label) => (
-                  <li
-                    key={label}
-                    className="flex aspect-square flex-col justify-end rounded-[3px] border border-dashed border-skin/25 bg-ink-deep/40 p-3 text-[0.75rem] leading-snug text-skin/60 backdrop-blur-sm"
-                  >
-                    <span className="text-skin/90">{label}</span>
-                    <span>Client photo, with permission</span>
-                  </li>
-                ))}
-              </ul>
-              <ReviewNote tone="dark" className="mt-4 max-w-2xl">
-                The Instagram profile is 18+ restricted, so no photos could be collected. Send originals you have
-                permission to use and they go in <code>src/content/site.ts</code>. These slots disappear when review mode
-                is off.
-              </ReviewNote>
-            </FadeIn>
-          )
-        )}
+        <ul className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-3 lg:gap-4">
+          {items.map((p) => (
+            <li key={p.src}>
+              <figure className="group overflow-hidden">
+                <Image
+                  src={p.src}
+                  alt={p.alt}
+                  width={p.width}
+                  height={p.height}
+                  sizes="(min-width: 768px) 33vw, 50vw"
+                  className="aspect-[4/5] w-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                />
+                <figcaption className="mt-2 text-[0.875rem] text-skin/70">
+                  {p.service}
+                  {p.stage ? `, ${p.stage.toLowerCase()}` : ""}. Photo: {p.credit}
+                </figcaption>
+              </figure>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
@@ -238,7 +187,7 @@ export function Footer() {
             {[
               ["#services", "Services"],
               ["#process", "Process"],
-              ["#work", "Work"],
+              ...(hasPortfolio ? [["#work", "Work"]] : []),
               ["#care", "Care"],
               ["#faq", "FAQ"],
               ["#book", "Book"],

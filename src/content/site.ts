@@ -39,7 +39,6 @@ export const site = {
   /** Words from the studio's own Instagram bio. */
   bioLine: "Say goodbye to overplucked brows & fading hairlines",
   bioSignoff: "Be beautiful 24/7",
-  instagramStats: { followers: "12K", posts: "345", checked: "October 2026" },
 
   // ── Unverified: leave empty until the studio confirms ──────────────────
   artistName: "",
@@ -59,6 +58,9 @@ export const site = {
  * Add an item only when clientPermission is true.
  */
 export const portfolio: PortfolioItem[] = [];
+
+/** The "Work" section and its nav links only appear once there are permitted photos. */
+export const hasPortfolio = portfolio.some((p) => p.clientPermission);
 
 /**
  * Review mode shows small "to confirm" notes beside anything the studio still
