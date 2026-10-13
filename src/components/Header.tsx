@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { hasPortfolio, site } from "@/content/site";
 import { Magnetic } from "./motion";
 import { getLenis } from "./SmoothScroll";
+import { ThemeToggle } from "./ThemeToggle";
 
 const links = [
   { href: "#services", label: "Services" },
@@ -80,6 +81,7 @@ export function Header() {
           <span className="hidden text-[0.875rem] text-mist md:inline">Permanent makeup &amp; SMP, Jersey City</span>
         </a>
 
+        <div className="flex items-center gap-2 lg:gap-7">
         <nav aria-label="Main" className="hidden lg:block">
           <ul className="flex items-center gap-9 text-[1rem] text-skin/80">
             {links.map((l) => (
@@ -99,6 +101,7 @@ export function Header() {
           </ul>
         </nav>
 
+        <ThemeToggle />
         <button
           ref={buttonRef}
           type="button"
@@ -113,6 +116,7 @@ export function Header() {
             <span className={`absolute left-0 h-px bg-current transition-all duration-500 ${open ? "top-1.5 w-7 -rotate-45" : "top-3 w-5"}`} />
           </span>
         </button>
+        </div>
       </div>
 
       <div aria-hidden className="absolute inset-x-0 bottom-0 h-px bg-skin/5">

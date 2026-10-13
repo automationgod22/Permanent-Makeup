@@ -75,6 +75,13 @@ CLI alternative: `npm i -g vercel && vercel` (preview) then `vercel --prod`.
 - Palette: aubergine ink `#2a1d24` / `#1d1218`, skin `#f2e4dc`, nude lip `#c98b83` / `#a8645e`, taupe `#6e5a52`, mapping red `#d24e63`, porcelain `#fbf7f4`.
 - Type: Italiana (display) + Hanken Grotesk (body), self-hosted from `src/app/fonts` (both SIL Open Font License).
 
+## Light & dark theme
+
+- Sun/moon toggle in the header. A first visit follows the device's light/dark setting; once a visitor picks a theme it's remembered in their browser (`localStorage` key `pm-theme`).
+- Colours are tokens in `src/app/globals.css` (`--surface`, `--surface-2`, `--surface-3`, `--fg`, `--fg-muted`, `--accent`), with the dark values under `[data-theme="dark"]`. The hero, booking and footer are dark in both themes by design.
+- No flash on load: a small inline script in `src/app/layout.tsx` sets `data-theme` on `<html>` before the first paint.
+- Switching uses a circular reveal from the button (View Transitions API) where the browser supports it; otherwise, or with reduced motion, it switches instantly.
+
 ## Imagery
 
 `public/art/pigment-*.webp` are abstract pigment textures rendered in code (no AI service, no faces), so they never pass as client results. To use AI images instead (e.g. made in ChatGPT/Codex), keep them to mood shots (studio, tools, pigment, textures), drop them in `public/art/` with the same file names, and don't present them as real treatments. Real client photos go in the portfolio (see above), with permission.

@@ -23,14 +23,14 @@ export function Marquee() {
     <div className="flex shrink-0 items-center" aria-hidden={hidden || undefined}>
       {items.map((t) => (
         <span key={t} className="flex items-center">
-          <span className="display px-6 text-[clamp(2.75rem,7vw,6rem)] leading-none text-ink lg:px-10">{t}</span>
-          <BrowGlyph className="h-5 w-12 text-lip-deep lg:h-7 lg:w-16" />
+          <span className="display px-6 text-[clamp(2.75rem,7vw,6rem)] leading-none text-fg lg:px-10">{t}</span>
+          <BrowGlyph className="h-5 w-12 text-accent lg:h-7 lg:w-16" />
         </span>
       ))}
     </div>
   );
   return (
-    <div className="marquee overflow-hidden border-y border-ink/10 bg-skin py-6 lg:py-8">
+    <div className="marquee overflow-hidden border-y border-fg/10 bg-surface py-6 lg:py-8">
       <div className="marquee-track">
         {row(false)}
         {row(true)}
@@ -41,17 +41,17 @@ export function Marquee() {
 
 export function Statement() {
   return (
-    <section aria-label="From the studio" className="bg-skin">
+    <section aria-label="From the studio" className="bg-surface">
       <div className={`${wrap} pb-2 pt-14 lg:pb-4 lg:pt-20`}>
         <figure>
           <blockquote>
             <WordRise
               text={`“${site.bioLine}.”`}
-              className="max-w-[17ch] font-sans text-[clamp(2.6rem,6.8vw,6.75rem)] font-semibold leading-[1.02] tracking-[-0.035em] text-ink [text-indent:-0.42em]"
+              className="max-w-[17ch] font-sans text-[clamp(2.6rem,6.8vw,6.75rem)] font-semibold leading-[1.02] tracking-[-0.035em] text-fg [text-indent:-0.42em]"
             />
           </blockquote>
-          <figcaption className="mt-8 flex items-center gap-4 text-[1.0625rem] text-taupe">
-            <span aria-hidden className="h-px w-12 bg-lip-deep" />
+          <figcaption className="mt-8 flex items-center gap-4 text-[1.0625rem] text-fg-muted">
+            <span aria-hidden className="h-px w-12 bg-accent" />
             From the studio’s Instagram bio, signed off “{site.bioSignoff}.”
           </figcaption>
         </figure>
@@ -102,17 +102,17 @@ export function Work() {
 
 export function Care() {
   return (
-    <section id="care" aria-labelledby="care-h" className="bg-skin">
+    <section id="care" aria-labelledby="care-h" className="bg-surface">
       <div className={`${wrap} grid gap-10 py-16 lg:grid-cols-12 lg:gap-12 lg:py-24`}>
         <div className="lg:col-span-5">
           <div className="lg:sticky lg:top-24">
             <RevealHeading id="care-h" lines={["Safety &", "aftercare"]} className="display text-[clamp(3.25rem,8vw,7rem)]" />
-            <p className="mt-6 max-w-[40ch] text-[1.1875rem] text-ink/80 lg:text-[1.3125rem]">
+            <p className="mt-6 max-w-[40ch] text-[1.1875rem] text-fg/80 lg:text-[1.3125rem]">
               Permanent makeup and SMP are cosmetic tattooing, so healing well matters as much as the session. The written
               aftercare you get at your appointment comes first.
             </p>
             <div className="relative mt-8 hidden aspect-[5/3] overflow-hidden rounded-[3px] lg:block">
-              <Image src="/art/pigment-lip.webp" alt="" fill sizes="40vw" className="object-cover" />
+              <Image src="/art/pigment-lip.webp" alt="" fill sizes="40vw" className="object-cover dark:brightness-[0.86]" />
             </div>
           </div>
         </div>
@@ -122,12 +122,12 @@ export function Care() {
             { title: "While it heals", items: aftercare },
           ].map((group) => (
             <FadeIn key={group.title}>
-              <div className="rounded-[3px] bg-porcelain p-6 lg:p-9">
+              <div className="rounded-[3px] bg-surface-2 p-6 lg:p-9">
                 <h3 className="display text-[2.5rem] leading-none lg:text-[3rem]">{group.title}</h3>
-                <ul className="mt-6 divide-y divide-ink/10">
+                <ul className="mt-6 divide-y divide-fg/10">
                   {group.items.map((t) => (
-                    <li key={t} className="flex gap-4 py-4 text-[1.0625rem] leading-relaxed text-ink/85 lg:text-[1.125rem]">
-                      <BrowGlyph className="mt-[0.45em] h-3 w-8 shrink-0 text-lip-deep" />
+                    <li key={t} className="flex gap-4 py-4 text-[1.0625rem] leading-relaxed text-fg/85 lg:text-[1.125rem]">
+                      <BrowGlyph className="mt-[0.45em] h-3 w-8 shrink-0 text-accent" />
                       <span>{t}</span>
                     </li>
                   ))}

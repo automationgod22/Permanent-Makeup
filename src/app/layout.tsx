@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { site } from "@/content/site";
+import { themeScript } from "@/components/ThemeToggle";
 import "lenis/dist/lenis.css";
 import "./globals.css";
 
@@ -47,7 +48,15 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${italiana.variable} ${hanken.variable} antialiased`}>
+    <html
+      lang="en"
+      data-theme="light"
+      suppressHydrationWarning
+      className={`${italiana.variable} ${hanken.variable} antialiased`}
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="min-h-dvh">{children}</body>
     </html>
   );

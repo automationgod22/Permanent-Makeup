@@ -14,7 +14,7 @@ export function ReviewNote({
   const colors =
     tone === "dark"
       ? "border-map/70 text-skin/85 bg-ink-soft/60"
-      : "border-map/60 text-ink/80 bg-porcelain/70";
+      : "border-map/60 text-fg/80 bg-surface-2/70";
   return (
     <p
       className={`flex gap-2 rounded-sm border border-dashed px-3 py-2 text-[0.8125rem] leading-snug ${colors} ${className}`}

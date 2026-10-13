@@ -81,7 +81,7 @@ export function Booking() {
     }`;
 
   return (
-    <section id="book" aria-labelledby="book-h" className="relative isolate overflow-hidden bg-ink text-skin">
+    <section id="book" aria-labelledby="book-h" className="relative isolate overflow-hidden bg-ink text-skin dark:border-t dark:border-skin/10">
       <div aria-hidden className="absolute -right-40 -top-40 -z-10 h-[38rem] w-[38rem] rounded-full bg-lip/20 blur-[120px]" />
       <div className="mx-auto grid max-w-[1500px] gap-10 px-5 py-16 sm:px-8 lg:grid-cols-12 lg:gap-12 lg:px-12 lg:py-24">
         <div className="lg:col-span-5">

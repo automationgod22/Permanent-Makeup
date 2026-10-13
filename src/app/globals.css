@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Theme switch: [data-theme] on <html>, set before paint by the script in layout.tsx */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 @theme {
   --color-ink: #2a1d24;
   --color-ink-deep: #1d1218;
@@ -20,9 +23,40 @@
   --ease-silk: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
+/* Theme tokens. Hero, booking and footer stay dark in both themes. */
 :root {
+  --surface: #f2e4dc;
+  --surface-2: #fbf7f4;
+  --surface-3: #e7d2c6;
+  --fg: #2a1d24;
+  --fg-muted: #6e5a52;
+  --accent: #a8645e;
   color-scheme: light;
 }
+
+[data-theme="dark"] {
+  --surface: #1a1015;
+  --surface-2: #22161c;
+  --surface-3: #2d1f26;
+  --fg: #f2e4dc;
+  --fg-muted: #bfaeac;
+  --accent: #d39a91;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-accent: var(--accent);
+}
+
+/* Circular reveal when the theme changes (see ThemeToggle) */
+::view-transition-old(root),
+::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+::view-transition-new(root) { z-index: 2; }
 
 html {
   -webkit-text-size-adjust: 100%;
@@ -30,7 +64,7 @@ html {
 
 body {
   background: var(--color-ink);
-  color: var(--color-ink);
+  color: var(--fg);
   font-family: var(--font-sans);
   font-size: 1.125rem;
   line-height: 1.6;
@@ -129,12 +163,13 @@ body {
 .btn-ghost-light::before { background: var(--color-skin); }
 .btn-ghost-light:hover { color: var(--color-ink); border-color: var(--color-skin); }
 
-.btn-ink { background: var(--color-ink); color: var(--color-skin); }
+.btn-ink { background: var(--fg); color: var(--surface); }
 .btn-ink::before { background: var(--color-lip-deep); }
+.btn-ink:hover { color: var(--color-porcelain); }
 
-.btn-ghost-dark { border: 1px solid rgb(42 29 36 / 0.3); color: var(--color-ink); }
-.btn-ghost-dark::before { background: var(--color-ink); }
-.btn-ghost-dark:hover { color: var(--color-skin); border-color: var(--color-ink); }
+.btn-ghost-dark { border: 1px solid color-mix(in oklab, var(--fg) 30%, transparent); color: var(--fg); }
+.btn-ghost-dark::before { background: var(--fg); }
+.btn-ghost-dark:hover { color: var(--surface); border-color: var(--fg); }
 
 .btn .btn-dot { width: 0.4rem; height: 0.4rem; border-radius: 999px; background: currentColor; transition: transform 0.5s var(--ease-out-soft); }
 .btn:hover .btn-dot { transform: scale(1.8); }
