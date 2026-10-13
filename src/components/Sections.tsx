@@ -1,21 +1,58 @@
 import Image from "next/image";
-import { aftercare, beforeVisit, faqs, process, services } from "@/content/copy";
+import { aftercare, beforeVisit, services } from "@/content/copy";
 import { portfolio, reviewMode, site } from "@/content/site";
+import { CountUp, FadeIn, Magnetic, RevealHeading, WordReveal } from "./motion";
 import { ReviewNote } from "./ReviewNote";
-import { ServiceArt } from "./ServiceArt";
 
-const wrap = "mx-auto max-w-7xl px-5 sm:px-8";
+const wrap = "mx-auto max-w-[1500px] px-5 sm:px-8 lg:px-12";
 
-export function Intro() {
+function BrowGlyph({ className = "" }: { className?: string }) {
   return (
-    <section aria-labelledby="intro-quote" className="border-b border-ink/10 bg-skin">
-      <div className={`${wrap} py-20 lg:py-28`}>
-        <figure className="max-w-5xl">
-          <blockquote id="intro-quote" className="display text-[clamp(2.4rem,6.4vw,5rem)] text-ink">
-            “{site.bioLine}.”
+    <svg viewBox="0 0 64 24" aria-hidden className={className}>
+      <path
+        d="M2 18 C1.5 15 3.5 13.5 8 13 C20 11 30 8 40 6 C47 4.8 55 6.5 62 12 C55 10 48 9.6 42 10.6 C31 12.4 20 15.6 10 18.4 C5.5 19.6 2.3 20 2 18 Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+export function Marquee() {
+  const items = services.map((s) => s.name);
+  const row = (hidden: boolean) => (
+    <div className="flex shrink-0 items-center" aria-hidden={hidden || undefined}>
+      {items.map((t) => (
+        <span key={t} className="flex items-center">
+          <span className="display px-6 text-[clamp(2.75rem,7vw,6rem)] leading-none text-ink lg:px-10">{t}</span>
+          <BrowGlyph className="h-5 w-12 text-lip-deep lg:h-7 lg:w-16" />
+        </span>
+      ))}
+    </div>
+  );
+  return (
+    <div className="marquee overflow-hidden border-y border-ink/10 bg-skin py-6 lg:py-8">
+      <div className="marquee-track">
+        {row(false)}
+        {row(true)}
+      </div>
+    </div>
+  );
+}
+
+export function Statement() {
+  return (
+    <section aria-label="From the studio" className="bg-skin">
+      <div className={`${wrap} py-16 lg:py-24`}>
+        <figure>
+          <blockquote>
+            <WordReveal
+              text={`“${site.bioLine}.”`}
+              className="display max-w-[16ch] text-[clamp(3rem,8.6vw,8.25rem)] leading-[0.95] text-ink"
+            />
           </blockquote>
-          <figcaption className="mt-6 text-[0.9375rem] text-taupe">
-            From the studio’s Instagram bio, where it signs off with “{site.bioSignoff}.”
+          <figcaption className="mt-8 flex items-center gap-4 text-[1.0625rem] text-taupe">
+            <span aria-hidden className="h-px w-12 bg-lip-deep" />
+            From the studio’s Instagram bio, signed off “{site.bioSignoff}.”
           </figcaption>
         </figure>
       </div>
@@ -23,155 +60,90 @@ export function Intro() {
   );
 }
 
-export function Services() {
-  return (
-    <section id="services" aria-labelledby="services-h" className="bg-skin">
-      <div className={`${wrap} py-20 lg:py-28`}>
-        <div className="max-w-2xl">
-          <h2 id="services-h" className="display text-[clamp(2.6rem,6vw,4.5rem)]">
-            Brows, lips, eyes and hairlines
-          </h2>
-          <p className="mt-5 max-w-[56ch] text-ink/75">
-            Start with a consultation, so shape and colour can be planned around your face, skin and hair rather than
-            a template.
-          </p>
-        </div>
-
-        <ul className="mt-16 lg:mt-20">
-          {services.map((s, i) => (
-            <li
-              key={s.key}
-              className="grid items-center gap-8 border-t border-ink/15 py-12 lg:grid-cols-12 lg:gap-12 lg:py-16"
-            >
-              <div className={`lg:col-span-5 ${i % 2 ? "lg:order-2 lg:col-start-8" : ""}`}>
-                <div className="rounded-[2px] bg-porcelain/70 px-6 py-10 sm:px-12 sm:py-14">
-                  <ServiceArt name={s.key} />
-                </div>
-              </div>
-              <div className={`lg:col-span-6 ${i % 2 ? "lg:order-1 lg:col-start-1" : "lg:col-start-7"}`}>
-                <h3 className="display text-[clamp(2.25rem,4.5vw,3.5rem)]">{s.name}</h3>
-                <p className="mt-4 max-w-[52ch] text-ink/80">{s.summary}</p>
-                <p className="mt-4 text-[0.9375rem] text-taupe">
-                  <span className="font-semibold text-ink">Good for</span> {s.goodFor.charAt(0).toLowerCase() + s.goodFor.slice(1)}
-                </p>
-                {s.toConfirm && <ReviewNote className="mt-5 max-w-[52ch]">{s.toConfirm}</ReviewNote>}
-              </div>
-            </li>
-          ))}
-        </ul>
-
-        <div className="flex flex-col items-start gap-4 border-t border-ink/15 pt-10 sm:flex-row sm:items-center sm:justify-between">
-          <p className="max-w-[48ch] text-ink/75">For pricing, ask in your consultation message.</p>
-          <a href="#book" className="rounded-full bg-ink px-7 py-4 text-center font-medium text-skin transition-colors hover:bg-ink-soft">
-            Book a consultation
-          </a>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export function Process() {
-  return (
-    <section id="process" aria-labelledby="process-h" className="bg-porcelain">
-      <div className={`${wrap} py-20 lg:py-28`}>
-        <h2 id="process-h" className="display max-w-3xl text-[clamp(2.6rem,6vw,4.5rem)]">
-          From first message to healed result
-        </h2>
-        <ol className="mt-14 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-5">
-          {process.map((step, i) => (
-            <li key={step.title} className="border-t border-map/50 pt-5">
-              <span className="display block text-[3.25rem] leading-none text-lip" aria-hidden>
-                {i + 1}
-              </span>
-              <h3 className="mt-4 text-lg font-semibold">
-                <span className="sr-only">Step {i + 1}: </span>
-                {step.title}
-              </h3>
-              <p className="mt-2 text-[0.9375rem] text-ink/75">{step.body}</p>
-            </li>
-          ))}
-        </ol>
-        <ReviewNote className="mt-12 max-w-2xl">
-          These steps describe a typical permanent makeup appointment. Check they match how the studio works,
-          especially touch-up timing and how SMP sessions are structured.
-        </ReviewNote>
-      </div>
-    </section>
-  );
-}
-
 export function Work() {
-  const hasWork = portfolio.length > 0;
+  const items = portfolio.filter((p) => p.clientPermission);
+  const hasWork = items.length > 0;
   return (
-    <section id="work" aria-labelledby="work-h" className="bg-ink text-skin">
-      <div className={`${wrap} py-20 lg:py-28`}>
+    <section id="work" aria-labelledby="work-h" className="grain relative isolate overflow-hidden bg-ink-deep text-skin">
+      <Image src="/art/pigment-dark.webp" alt="" fill sizes="100vw" className="-z-10 scale-x-[-1] object-cover opacity-70" />
+      <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-b from-ink-deep/40 via-ink-deep/60 to-ink-deep" />
+      <div className={`${wrap} py-16 lg:py-24`}>
         <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
-          <div className="lg:col-span-7">
-            <h2 id="work-h" className="display text-[clamp(2.6rem,6vw,4.5rem)]">
-              {hasWork ? "Recent work" : "The portfolio lives on Instagram"}
-            </h2>
-            <p className="mt-5 max-w-[52ch] text-skin/75">
-              The studio’s Instagram, @{site.handle}, had {site.instagramStats.posts} posts and about{" "}
-              {site.instagramStats.followers} followers as of {site.instagramStats.checked}. Instagram may ask you to log in to
-              view the profile.
+          <div className="lg:col-span-8">
+            <RevealHeading
+              id="work-h"
+              lines={hasWork ? ["Recent work"] : ["See the work", "on Instagram"]}
+              className="display text-[clamp(3.25rem,8vw,7rem)]"
+            />
+            <p className="mt-6 max-w-[44ch] text-[1.1875rem] text-skin/80 lg:text-[1.3125rem]">
+              Fresh and healed results are posted at @{site.handle}. Instagram may ask you to log in to view the profile.
             </p>
+            <div className="mt-8">
+              <Magnetic>
+                <a href={site.instagramUrl} target="_blank" rel="noopener noreferrer" className="btn btn-skin">
+                  Open @{site.handle}
+                </a>
+              </Magnetic>
+            </div>
           </div>
-          <div className="lg:col-span-5 lg:justify-self-end">
-            <a
-              href={site.instagramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block rounded-full bg-skin px-7 py-4 font-medium text-ink transition-colors hover:bg-porcelain"
-            >
-              View @{site.handle} on Instagram
-            </a>
-          </div>
+          <dl className="grid grid-cols-2 gap-6 border-t border-skin/15 pt-6 lg:col-span-4">
+            <div>
+              <dt className="text-[0.9375rem] text-skin/60">Posts</dt>
+              <dd className="display mt-1 text-[clamp(3.5rem,7vw,5.5rem)] leading-none">
+                <CountUp value={site.instagramStats.posts} />
+              </dd>
+            </div>
+            <div>
+              <dt className="text-[0.9375rem] text-skin/60">Followers</dt>
+              <dd className="display mt-1 text-[clamp(3.5rem,7vw,5.5rem)] leading-none">
+                <CountUp value={site.instagramStats.followers} />
+              </dd>
+            </div>
+            <p className="col-span-2 text-[0.875rem] text-skin/50">On Instagram as of {site.instagramStats.checked}.</p>
+          </dl>
         </div>
 
         {hasWork ? (
-          <ul className="mt-14 grid grid-cols-2 gap-3 md:grid-cols-3 lg:gap-5">
-            {portfolio
-              .filter((p) => p.clientPermission)
-              .map((p) => (
-                <li key={p.src}>
-                  <figure>
-                    <Image
-                      src={p.src}
-                      alt={p.alt}
-                      width={p.width}
-                      height={p.height}
-                      sizes="(min-width: 768px) 33vw, 50vw"
-                      className="aspect-[4/5] w-full object-cover"
-                    />
-                    <figcaption className="mt-2 text-[0.8125rem] text-skin/70">
-                      {p.service}
-                      {p.stage ? `, ${p.stage.toLowerCase()}` : ""}. Photo: {p.credit}
-                    </figcaption>
-                  </figure>
-                </li>
-              ))}
+          <ul className="mt-12 grid grid-cols-2 gap-3 md:grid-cols-3 lg:gap-4">
+            {items.map((p) => (
+              <li key={p.src}>
+                <figure className="group overflow-hidden">
+                  <Image
+                    src={p.src}
+                    alt={p.alt}
+                    width={p.width}
+                    height={p.height}
+                    sizes="(min-width: 768px) 33vw, 50vw"
+                    className="aspect-[4/5] w-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                  />
+                  <figcaption className="mt-2 text-[0.875rem] text-skin/70">
+                    {p.service}
+                    {p.stage ? `, ${p.stage.toLowerCase()}` : ""}. Photo: {p.credit}
+                  </figcaption>
+                </figure>
+              </li>
+            ))}
           </ul>
         ) : (
           reviewMode && (
-            <div className="mt-14">
-              <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6" aria-label="Empty portfolio slots">
+            <FadeIn className="mt-12">
+              <ul className="grid grid-cols-3 gap-2 sm:grid-cols-6 lg:gap-3" aria-label="Empty portfolio slots">
                 {["Ombré brows", "Nude blush lips", "Eyes", "SMP hairline", "SMP density", "Healed result"].map((label) => (
                   <li
                     key={label}
-                    className="flex aspect-[3/4] flex-col justify-end border border-dashed border-skin/25 p-3 text-[0.75rem] leading-snug text-skin/55"
+                    className="flex aspect-square flex-col justify-end rounded-[3px] border border-dashed border-skin/25 bg-ink-deep/40 p-3 text-[0.75rem] leading-snug text-skin/60 backdrop-blur-sm"
                   >
-                    <span className="text-skin/85">{label}</span>
-                    <span>Client photo, added with written permission</span>
+                    <span className="text-skin/90">{label}</span>
+                    <span>Client photo, with permission</span>
                   </li>
                 ))}
               </ul>
-              <ReviewNote tone="dark" className="mt-6 max-w-2xl">
-                The Instagram profile is 18+ restricted, so no photos could be collected for this demo. Send originals
-                you have permission to use and they go in <code>src/content/site.ts</code>. These empty slots disappear
-                when review mode is off.
+              <ReviewNote tone="dark" className="mt-4 max-w-2xl">
+                The Instagram profile is 18+ restricted, so no photos could be collected. Send originals you have
+                permission to use and they go in <code>src/content/site.ts</code>. These slots disappear when review mode
+                is off.
               </ReviewNote>
-            </div>
+            </FadeIn>
           )
         )}
       </div>
@@ -182,75 +154,42 @@ export function Work() {
 export function Care() {
   return (
     <section id="care" aria-labelledby="care-h" className="bg-skin">
-      <div className={`${wrap} py-20 lg:py-28`}>
-        <div className="max-w-3xl">
-          <h2 id="care-h" className="display text-[clamp(2.6rem,6vw,4.5rem)]">
-            Safety and aftercare
-          </h2>
-          <p className="mt-5 max-w-[56ch] text-ink/75">
-            Permanent makeup and SMP are cosmetic tattooing, so healing well matters as much as the session. This is
-            general guidance; the written aftercare you receive at your appointment takes priority.
-          </p>
-        </div>
-        <div className="mt-14 grid gap-12 lg:grid-cols-2 lg:gap-16">
-          <div>
-            <h3 className="border-b border-ink/15 pb-3 text-lg font-semibold">Before your visit</h3>
-            <ul className="mt-5 space-y-4">
-              {beforeVisit.map((t) => (
-                <li key={t} className="flex gap-4 text-ink/80">
-                  <span aria-hidden className="mt-[0.7em] h-px w-5 shrink-0 bg-map" />
-                  <span>{t}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h3 className="border-b border-ink/15 pb-3 text-lg font-semibold">While it heals</h3>
-            <ul className="mt-5 space-y-4">
-              {aftercare.map((t) => (
-                <li key={t} className="flex gap-4 text-ink/80">
-                  <span aria-hidden className="mt-[0.7em] h-px w-5 shrink-0 bg-map" />
-                  <span>{t}</span>
-                </li>
-              ))}
-            </ul>
+      <div className={`${wrap} grid gap-10 py-16 lg:grid-cols-12 lg:gap-12 lg:py-24`}>
+        <div className="lg:col-span-5">
+          <div className="lg:sticky lg:top-24">
+            <RevealHeading id="care-h" lines={["Safety &", "aftercare"]} className="display text-[clamp(3.25rem,8vw,7rem)]" />
+            <p className="mt-6 max-w-[40ch] text-[1.1875rem] text-ink/80 lg:text-[1.3125rem]">
+              Permanent makeup and SMP are cosmetic tattooing, so healing well matters as much as the session. The written
+              aftercare you get at your appointment comes first.
+            </p>
+            <div className="relative mt-8 hidden aspect-[5/3] overflow-hidden rounded-[3px] lg:block">
+              <Image src="/art/pigment-lip.webp" alt="" fill sizes="40vw" className="object-cover" />
+            </div>
           </div>
         </div>
-        <ReviewNote className="mt-12 max-w-2xl">
-          Add the studio’s own aftercare sheet and any licensing or health-permit details here once provided. None were
-          published on Instagram, so none are stated.
-        </ReviewNote>
-      </div>
-    </section>
-  );
-}
-
-export function Faq() {
-  return (
-    <section id="faq" aria-labelledby="faq-h" className="bg-porcelain">
-      <div className={`${wrap} grid gap-12 py-20 lg:grid-cols-12 lg:py-28`}>
-        <div className="lg:col-span-4">
-          <h2 id="faq-h" className="display text-[clamp(2.6rem,6vw,4.5rem)]">
-            Questions
-          </h2>
-          <p className="mt-5 max-w-[34ch] text-ink/75">Anything else, ask in your Instagram message.</p>
-        </div>
-        <div className="lg:col-span-8">
-          {faqs.map((f) => (
-            <details key={f.q} className="group border-t border-ink/15 last:border-b">
-              <summary className="flex cursor-pointer items-start justify-between gap-6 py-6 text-lg font-medium">
-                <span>{f.q}</span>
-                <span
-                  aria-hidden
-                  className="faq-plus relative mt-2 h-3.5 w-3.5 shrink-0 transition-transform duration-300 before:absolute before:left-0 before:top-1/2 before:h-px before:w-full before:bg-ink after:absolute after:left-1/2 after:top-0 after:h-full after:w-px after:bg-ink"
-                />
-              </summary>
-              <div className="pb-7 pr-10">
-                <p className="max-w-[60ch] text-ink/80">{f.a}</p>
-                {f.toConfirm && <ReviewNote className="mt-4 max-w-[60ch]">{f.toConfirm}</ReviewNote>}
+        <div className="grid gap-4 lg:col-span-7">
+          {[
+            { title: "Before your visit", items: beforeVisit },
+            { title: "While it heals", items: aftercare },
+          ].map((group) => (
+            <FadeIn key={group.title}>
+              <div className="rounded-[3px] bg-porcelain p-6 lg:p-9">
+                <h3 className="display text-[2.5rem] leading-none lg:text-[3rem]">{group.title}</h3>
+                <ul className="mt-6 divide-y divide-ink/10">
+                  {group.items.map((t) => (
+                    <li key={t} className="flex gap-4 py-4 text-[1.0625rem] leading-relaxed text-ink/85 lg:text-[1.125rem]">
+                      <BrowGlyph className="mt-[0.45em] h-3 w-8 shrink-0 text-lip-deep" />
+                      <span>{t}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </details>
+            </FadeIn>
           ))}
+          <ReviewNote className="max-w-2xl">
+            Add the studio’s own aftercare sheet and any licensing or health-permit details once provided. None were
+            published on Instagram, so none are stated.
+          </ReviewNote>
         </div>
       </div>
     </section>
@@ -260,13 +199,12 @@ export function Faq() {
 export function Footer() {
   const hasAddress = Boolean(site.streetAddress);
   return (
-    <footer className="bg-ink text-skin/75">
-      <div className={`${wrap} grid gap-10 py-14 md:grid-cols-3`}>
-        <div>
-          <p className="display text-[2.25rem] text-skin">pm_usa77</p>
-          <p className="mt-2 text-[0.9375rem]">Permanent makeup and SMP in {site.city}, New Jersey.</p>
-        </div>
-        <address className="text-[0.9375rem] not-italic">
+    <footer className="overflow-hidden bg-ink-deep text-skin/75">
+      <div className={`${wrap} grid gap-10 pt-14 md:grid-cols-12`}>
+        <p className="max-w-[28ch] text-[1.1875rem] text-skin md:col-span-5">
+          Permanent makeup and scalp micropigmentation in {site.city}, New Jersey.
+        </p>
+        <address className="text-[1rem] not-italic md:col-span-4">
           {hasAddress && (
             <p>
               {site.streetAddress}
@@ -276,26 +214,26 @@ export function Footer() {
           )}
           {site.phone && (
             <p className="mt-2">
-              <a href={`tel:${site.phone}`} className="hover:text-skin">
+              <a href={`tel:${site.phone}`} className="ulink hover:text-skin">
                 {site.phone}
               </a>
             </p>
           )}
           {site.email && (
             <p className="mt-2">
-              <a href={`mailto:${site.email}`} className="hover:text-skin">
+              <a href={`mailto:${site.email}`} className="ulink hover:text-skin">
                 {site.email}
               </a>
             </p>
           )}
           <p className={hasAddress || site.phone || site.email ? "mt-2" : ""}>
-            <a href={site.instagramUrl} target="_blank" rel="noopener noreferrer" className="underline-offset-4 hover:text-skin hover:underline">
+            <a href={site.instagramUrl} target="_blank" rel="noopener noreferrer" className="ulink hover:text-skin">
               Instagram: @{site.handle}
             </a>
           </p>
           {site.hours && <p className="mt-2">{site.hours}</p>}
         </address>
-        <nav aria-label="Footer" className="text-[0.9375rem]">
+        <nav aria-label="Footer" className="text-[1rem] md:col-span-3">
           <ul className="grid grid-cols-2 gap-2">
             {[
               ["#services", "Services"],
@@ -306,7 +244,7 @@ export function Footer() {
               ["#book", "Book"],
             ].map(([href, label]) => (
               <li key={href}>
-                <a href={href} className="hover:text-skin">
+                <a href={href} className="ulink hover:text-skin">
                   {label}
                 </a>
               </li>
@@ -314,7 +252,10 @@ export function Footer() {
           </ul>
         </nav>
       </div>
-      <div className={`${wrap} border-t border-skin/10 py-6 text-[0.8125rem] text-skin/50`}>
+      <p aria-hidden className="display select-none whitespace-nowrap px-3 pt-8 text-center text-[24vw] leading-[0.78] text-skin/[0.07]">
+        pm_usa77
+      </p>
+      <div className={`${wrap} border-t border-skin/10 py-5 text-[0.875rem] text-skin/50`}>
         <p>
           © 2026 @{site.handle}.
           {reviewMode && " Website preview. Some details are awaiting confirmation from the studio."}

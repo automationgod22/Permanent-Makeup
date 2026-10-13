@@ -70,7 +70,11 @@ CLI alternative: `npm i -g vercel && vercel` (preview) then `vercel --prod`.
 
 ## Design notes
 
-- Concept: brow mapping. The hero draws the guide lines artists use to place a brow, then fills an ombré brow from light to dense. It's the only orchestrated animation; `prefers-reduced-motion` shows it static.
-- Palette: aubergine ink `#2a1d24`, skin `#f2e4dc`, nude lip `#c98b83`, taupe pigment `#6e5a52`, mapping red `#d24e63` (hairlines only), porcelain `#fbf7f4`.
+- Concept: brow mapping on liquid pigment. The hero is a live WebGL pigment field (stirs with the cursor, pauses off-screen, static under reduced motion) with the brow-mapping drawing on top.
+- Interactions: line-mask heading reveals, scroll-lit bio quote, services marquee, service explorer (hover/click/arrow keys, 3D tilt image stage, "Ask about…" pre-selects the service in the booking form), scroll-filled process line, count-up Instagram stats, animated FAQ, magnetic buttons, scroll progress bar, Lenis smooth scrolling. All respect `prefers-reduced-motion`.
+- Palette: aubergine ink `#2a1d24` / `#1d1218`, skin `#f2e4dc`, nude lip `#c98b83` / `#a8645e`, taupe `#6e5a52`, mapping red `#d24e63`, porcelain `#fbf7f4`.
 - Type: Italiana (display) + Hanken Grotesk (body), self-hosted from `src/app/fonts` (both SIL Open Font License).
-- Illustrations are SVG and code-drawn, so they never imply a real client result.
+
+## Imagery
+
+`public/art/pigment-*.webp` are abstract pigment textures rendered in code (no AI service, no faces), so they never pass as client results. To use AI images instead (e.g. made in ChatGPT/Codex), keep them to mood shots (studio, tools, pigment, textures), drop them in `public/art/` with the same file names, and don't present them as real treatments. Real client photos go in the portfolio (see above), with permission.

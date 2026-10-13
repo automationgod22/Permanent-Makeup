@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { site } from "@/content/site";
+import { Magnetic } from "./motion";
+import { getLenis } from "./SmoothScroll";
 
 const links = [
   { href: "#services", label: "Services" },
@@ -15,12 +17,26 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const y = window.scrollY;
+      setScrolled(y > 24);
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      if (barRef.current) barRef.current.style.transform = `scaleX(${max > 0 ? y / max : 0})`;
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(raf);
+    };
   }, []);
 
   useEffect(() => {
@@ -36,18 +52,20 @@ export function Header() {
     };
     document.addEventListener("keydown", onKey);
     window.addEventListener("resize", onResize);
-    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    getLenis()?.stop();
     return () => {
       document.removeEventListener("keydown", onKey);
       window.removeEventListener("resize", onResize);
-      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+      getLenis()?.start();
     };
   }, [open]);
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
-        scrolled || open ? "bg-ink/95 backdrop-blur-md" : "bg-transparent"
+      className={`fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter] duration-500 ${
+        scrolled || open ? "bg-ink-deep/95 backdrop-blur-xl" : "bg-transparent"
       }`}
     >
       <a
@@ -56,28 +74,27 @@ export function Header() {
       >
         Skip to content
       </a>
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8 lg:h-20">
-        <a href="#top" className="group flex items-baseline gap-3 text-skin" aria-label={`@${site.handle}, back to top`}>
-          <span className="display text-[1.75rem] leading-none lg:text-[2rem]">pm_usa77</span>
-          <span className="hidden text-[0.8125rem] text-mist sm:inline">Permanent makeup &amp; SMP, Jersey City</span>
+      <div className="mx-auto flex h-16 max-w-[1500px] items-center justify-between px-5 sm:px-8 lg:h-[4.5rem] lg:px-12">
+        <a href="#top" className="flex items-baseline gap-3 text-skin" aria-label={`@${site.handle}, back to top`}>
+          <span className="display text-[2rem] leading-none lg:text-[2.25rem]">pm_usa77</span>
+          <span className="hidden text-[0.875rem] text-mist md:inline">Permanent makeup &amp; SMP, Jersey City</span>
         </a>
 
         <nav aria-label="Main" className="hidden lg:block">
-          <ul className="flex items-center gap-8 text-[0.9375rem] text-skin/80">
+          <ul className="flex items-center gap-9 text-[1rem] text-skin/80">
             {links.map((l) => (
               <li key={l.href}>
-                <a href={l.href} className="transition-colors hover:text-skin">
+                <a href={l.href} className="ulink pb-0.5 transition-colors hover:text-skin">
                   {l.label}
                 </a>
               </li>
             ))}
             <li>
-              <a
-                href="#book"
-                className="rounded-full border border-skin/40 px-5 py-2.5 text-skin transition-colors hover:border-skin hover:bg-skin hover:text-ink"
-              >
-                Book a consultation
-              </a>
+              <Magnetic strength={0.2}>
+                <a href="#book" className="btn btn-skin !px-6 !py-3 !text-[0.95rem]">
+                  Book a consultation
+                </a>
+              </Magnetic>
             </li>
           </ul>
         </nav>
@@ -91,54 +108,42 @@ export function Header() {
           onClick={() => setOpen((o) => !o)}
         >
           <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
-          <span aria-hidden className="relative block h-3 w-6">
-            <span
-              className={`absolute left-0 h-px w-6 bg-current transition-transform duration-300 ${
-                open ? "top-1.5 rotate-45" : "top-0"
-              }`}
-            />
-            <span
-              className={`absolute left-0 h-px w-6 bg-current transition-transform duration-300 ${
-                open ? "top-1.5 -rotate-45" : "top-3"
-              }`}
-            />
+          <span aria-hidden className="relative block h-3 w-7">
+            <span className={`absolute left-0 h-px w-7 bg-current transition-transform duration-500 ${open ? "top-1.5 rotate-45" : "top-0"}`} />
+            <span className={`absolute left-0 h-px bg-current transition-all duration-500 ${open ? "top-1.5 w-7 -rotate-45" : "top-3 w-5"}`} />
           </span>
         </button>
+      </div>
+
+      <div aria-hidden className="absolute inset-x-0 bottom-0 h-px bg-skin/5">
+        <div ref={barRef} className="h-full origin-left bg-lip" style={{ transform: "scaleX(0)" }} />
       </div>
 
       <div
         id="mobile-menu"
         hidden={!open}
-        className="h-[calc(100dvh-4rem)] overflow-y-auto bg-ink px-5 pb-10 pt-6 lg:hidden"
+        className="h-[calc(100dvh-4rem)] overflow-y-auto bg-ink px-5 pb-10 pt-4 lg:hidden"
       >
         <nav aria-label="Mobile">
-          <ul className="space-y-1">
-            {links.map((l) => (
-              <li key={l.href}>
+          <ul>
+            {links.map((l, i) => (
+              <li key={l.href} className="border-b border-skin/10">
                 <a
                   href={l.href}
                   onClick={() => setOpen(false)}
-                  className="display block py-3 text-[2.75rem] text-skin"
+                  className="display flex items-baseline justify-between py-4 text-[3.25rem] text-skin"
                 >
                   {l.label}
+                  <span className="font-sans text-[0.875rem] text-mist">0{i + 1}</span>
                 </a>
               </li>
             ))}
           </ul>
-          <div className="mt-10 flex flex-col gap-3">
-            <a
-              href="#book"
-              onClick={() => setOpen(false)}
-              className="rounded-full bg-skin px-6 py-4 text-center font-medium text-ink"
-            >
+          <div className="mt-8 grid gap-3">
+            <a href="#book" onClick={() => setOpen(false)} className="btn btn-skin w-full">
               Book a consultation
             </a>
-            <a
-              href={site.instagramDmUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-full border border-skin/40 px-6 py-4 text-center text-skin"
-            >
+            <a href={site.instagramDmUrl} target="_blank" rel="noopener noreferrer" className="btn btn-ghost-light w-full">
               Message on Instagram
             </a>
           </div>

@@ -1,7 +1,11 @@
 import { Booking } from "@/components/Booking";
+import { Faq } from "@/components/Faq";
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
-import { Care, Faq, Footer, Intro, Process, Services, Work } from "@/components/Sections";
+import { Process } from "@/components/Process";
+import { Care, Footer, Marquee, Statement, Work } from "@/components/Sections";
+import { ServiceExplorer } from "@/components/ServiceExplorer";
+import { SmoothScroll } from "@/components/SmoothScroll";
 import { services } from "@/content/copy";
 import { site } from "@/content/site";
 
@@ -41,11 +45,13 @@ export default function Home() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredData() }} />
+      <SmoothScroll />
       <Header />
       <main id="main">
         <Hero />
-        <Intro />
-        <Services />
+        <Marquee />
+        <Statement />
+        <ServiceExplorer />
         <Process />
         <Work />
         <Care />

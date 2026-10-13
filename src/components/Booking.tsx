@@ -1,9 +1,11 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { services } from "@/content/copy";
 import { site } from "@/content/site";
+import { Magnetic, RevealHeading } from "./motion";
 import { ReviewNote } from "./ReviewNote";
+import { PRESELECT_EVENT } from "./ServiceExplorer";
 
 type Status =
   | { kind: "idle" }
@@ -14,16 +16,27 @@ const times = ["Weekdays", "Weekends", "Evenings", "I’m flexible"];
 
 export function Booking() {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
+  const [picked, setPicked] = useState<string[]>([]);
+  const [time, setTime] = useState("");
+  const [previous, setPrevious] = useState("");
   const statusRef = useRef<HTMLDivElement>(null);
   const id = useId();
+
+  useEffect(() => {
+    const onPreselect = (e: Event) => {
+      const name = (e as CustomEvent<string>).detail;
+      setPicked((p) => (p.includes(name) ? p : [...p, name]));
+    };
+    window.addEventListener(PRESELECT_EVENT, onPreselect);
+    return () => window.removeEventListener(PRESELECT_EVENT, onPreselect);
+  }, []);
+
+  const toggle = (name: string) => setPicked((p) => (p.includes(name) ? p.filter((x) => x !== name) : [...p, name]));
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     const name = String(data.get("name") ?? "").trim();
-    const picked = data.getAll("service").map(String);
-    const time = String(data.get("time") ?? "");
-    const previous = String(data.get("previous") ?? "");
     const notes = String(data.get("notes") ?? "").trim();
 
     if (!name || picked.length === 0) {
@@ -35,10 +48,11 @@ export function Booking() {
       return;
     }
 
+    const ordered = services.map((s) => s.name).filter((n) => picked.includes(n));
     const text = [
       "Hi! I’d like to book a consultation.",
       `Name: ${name}`,
-      `Interested in: ${picked.join(", ")}`,
+      `Interested in: ${ordered.join(", ")}`,
       time && `Best times: ${time}`,
       previous && `Previous permanent makeup or SMP: ${previous}`,
       notes && `Notes: ${notes}`,
@@ -60,131 +74,113 @@ export function Booking() {
   }
 
   const field =
-    "mt-2 w-full rounded-[2px] border border-ink/25 bg-porcelain px-4 py-3 text-base text-ink placeholder:text-ink/40 focus:border-ink focus:outline-none focus-visible:outline-2 focus-visible:outline-map";
+    "mt-2 w-full rounded-[3px] border border-skin/20 bg-skin/[0.06] px-4 py-3.5 text-[1.0625rem] text-skin placeholder:text-skin/35 transition-colors focus:border-skin/70 focus:bg-skin/10 focus:outline-none";
+  const chip = (on: boolean) =>
+    `rounded-full border px-5 py-3 text-[1rem] transition-all duration-300 ${
+      on ? "border-skin bg-skin text-ink" : "border-skin/25 text-skin/85 hover:border-skin/60"
+    }`;
 
   return (
-    <section id="book" aria-labelledby="book-h" className="bg-skin-deep">
-      <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 sm:px-8 lg:grid-cols-12 lg:py-28">
+    <section id="book" aria-labelledby="book-h" className="relative isolate overflow-hidden bg-ink text-skin">
+      <div aria-hidden className="absolute -right-40 -top-40 -z-10 h-[38rem] w-[38rem] rounded-full bg-lip/20 blur-[120px]" />
+      <div className="mx-auto grid max-w-[1500px] gap-10 px-5 py-16 sm:px-8 lg:grid-cols-12 lg:gap-12 lg:px-12 lg:py-24">
         <div className="lg:col-span-5">
-          <h2 id="book-h" className="display text-[clamp(2.6rem,6vw,4.5rem)]">
-            Book a consultation
-          </h2>
-          <p className="mt-5 max-w-[42ch] text-ink/80">
-            Requests go to the studio as an Instagram message. Fill this in and it’s copied for you, then a chat
-            with @{site.handle} opens. Paste it in and send.
+          <RevealHeading id="book-h" lines={["Book a", "consultation"]} className="display text-[clamp(3rem,6.2vw,5.75rem)]" />
+          <p className="mt-6 max-w-[38ch] text-[1.1875rem] text-skin/80 lg:text-[1.3125rem]">
+            Requests go to the studio as an Instagram message. Fill this in and it’s copied for you, then a chat with @
+            {site.handle} opens. Paste it in and send.
           </p>
-          <p className="mt-4 max-w-[42ch] text-[0.9375rem] text-taupe">
-            Nothing you type is stored or sent by this website.
-          </p>
-          <ReviewNote className="mt-6 max-w-[42ch]">
-            No phone, email or booking link was public. Add any the studio wants listed in <code>src/content/site.ts</code> and
-            they appear here automatically.
-          </ReviewNote>
-
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
+          <p className="mt-4 text-[1rem] text-skin/55">Nothing you type is stored or sent by this website.</p>
+          <div className="mt-8 flex flex-wrap gap-3">
             {site.bookingUrl && (
-              <a
-                href={site.bookingUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-full bg-ink px-7 py-4 text-center font-medium text-skin"
-              >
+              <a href={site.bookingUrl} target="_blank" rel="noopener noreferrer" className="btn btn-skin">
                 Book online
               </a>
             )}
-            <a
-              href={site.instagramDmUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-full border border-ink/35 px-7 py-4 text-center transition-colors hover:border-ink"
-            >
-              Message on Instagram instead
-            </a>
+            <Magnetic>
+              <a href={site.instagramDmUrl} target="_blank" rel="noopener noreferrer" className="btn btn-ghost-light">
+                Message on Instagram instead
+              </a>
+            </Magnetic>
             {site.phone && (
-              <a href={`tel:${site.phone}`} className="rounded-full border border-ink/35 px-7 py-4 text-center">
+              <a href={`tel:${site.phone}`} className="btn btn-ghost-light">
                 Call {site.phone}
               </a>
             )}
           </div>
+          <ReviewNote tone="dark" className="mt-6 max-w-[42ch]">
+            No phone, email or booking link was public. Add any the studio wants listed in <code>src/content/site.ts</code>{" "}
+            and they appear here automatically.
+          </ReviewNote>
         </div>
 
-        <form onSubmit={onSubmit} noValidate className="lg:col-span-7" aria-describedby={`${id}-status`}>
+        <form
+          onSubmit={onSubmit}
+          noValidate
+          className="rounded-[4px] border border-skin/10 bg-ink-deep/60 p-5 backdrop-blur sm:p-8 lg:col-span-7 lg:p-10"
+          aria-describedby={`${id}-status`}
+        >
           <div className="grid gap-7">
+            <fieldset>
+              <legend className="text-[1.0625rem] font-medium">What are you interested in?</legend>
+              <div className="mt-3 flex flex-wrap gap-2.5">
+                {services.map((s) => {
+                  const on = picked.includes(s.name);
+                  return (
+                    <button key={s.key} type="button" aria-pressed={on} onClick={() => toggle(s.name)} className={chip(on)}>
+                      {s.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </fieldset>
+
             <div>
-              <label htmlFor={`${id}-name`} className="font-medium">
+              <label htmlFor={`${id}-name`} className="text-[1.0625rem] font-medium">
                 Your name
               </label>
               <input id={`${id}-name`} name="name" autoComplete="name" required className={field} />
             </div>
 
             <fieldset>
-              <legend className="font-medium">What are you interested in?</legend>
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                {services.map((s) => (
-                  <label
-                    key={s.key}
-                    className="flex cursor-pointer items-center gap-3 rounded-[2px] border border-ink/20 bg-porcelain/60 px-4 py-3 has-[:checked]:border-ink has-[:checked]:bg-porcelain"
-                  >
-                    <input type="checkbox" name="service" value={s.name} className="h-4 w-4 accent-ink" />
-                    <span>{s.name}</span>
-                  </label>
+              <legend className="text-[1.0625rem] font-medium">Best times for you</legend>
+              <div className="mt-3 flex flex-wrap gap-2.5">
+                {times.map((t) => (
+                  <button key={t} type="button" aria-pressed={time === t} onClick={() => setTime(time === t ? "" : t)} className={chip(time === t)}>
+                    {t}
+                  </button>
                 ))}
               </div>
             </fieldset>
 
-            <div className="grid gap-7 sm:grid-cols-2">
-              <div>
-                <label htmlFor={`${id}-time`} className="font-medium">
-                  Best times for you
-                </label>
-                <select id={`${id}-time`} name="time" className={field} defaultValue="">
-                  <option value="">No preference</option>
-                  {times.map((t) => (
-                    <option key={t}>{t}</option>
-                  ))}
-                </select>
+            <fieldset>
+              <legend className="text-[1.0625rem] font-medium">Had permanent makeup or SMP before?</legend>
+              <div className="mt-3 flex flex-wrap gap-2.5">
+                {["Yes", "No"].map((v) => (
+                  <button key={v} type="button" aria-pressed={previous === v} onClick={() => setPrevious(previous === v ? "" : v)} className={chip(previous === v)}>
+                    {v}
+                  </button>
+                ))}
               </div>
-              <fieldset>
-                <legend className="font-medium">Had permanent makeup or SMP before?</legend>
-                <div className="mt-3 flex gap-6">
-                  {["Yes", "No"].map((v) => (
-                    <label key={v} className="flex cursor-pointer items-center gap-2 py-2">
-                      <input type="radio" name="previous" value={v} className="h-4 w-4 accent-ink" />
-                      {v}
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
-            </div>
+            </fieldset>
 
             <div>
-              <label htmlFor={`${id}-notes`} className="font-medium">
-                Anything to add? <span className="font-normal text-taupe">(optional)</span>
+              <label htmlFor={`${id}-notes`} className="text-[1.0625rem] font-medium">
+                Anything to add? <span className="font-normal text-skin/50">(optional)</span>
               </label>
-              <textarea
-                id={`${id}-notes`}
-                name="notes"
-                rows={4}
-                className={field}
-                placeholder="The look you’re after, dates that work, questions…"
-              />
+              <textarea id={`${id}-notes`} name="notes" rows={3} className={field} placeholder="The look you’re after, dates that work, questions…" />
             </div>
 
             <div>
-              <button
-                type="submit"
-                className="w-full rounded-full bg-ink px-8 py-4 font-medium text-skin transition-colors hover:bg-ink-soft sm:w-auto"
-              >
+              <button type="submit" className="btn btn-skin w-full sm:w-auto">
                 Copy request and open Instagram
               </button>
             </div>
 
             <div id={`${id}-status`} ref={statusRef} tabIndex={-1} aria-live="polite" className="outline-none">
-              {status.kind === "error" && (
-                <p className="border-l-2 border-map pl-4 text-ink">{status.message}</p>
-              )}
+              {status.kind === "error" && <p className="border-l-2 border-map pl-4 text-[1.0625rem]">{status.message}</p>}
               {status.kind === "ready" && (
-                <div className="rounded-[2px] border border-ink/20 bg-porcelain p-5">
+                <div className="rounded-[3px] border border-skin/15 bg-skin/[0.06] p-5">
                   <p className="font-medium">
                     {status.copied
                       ? "Request copied. Paste it into the Instagram chat and send."
@@ -199,14 +195,9 @@ export function Booking() {
                     value={status.text}
                     rows={6}
                     onFocus={(e) => e.currentTarget.select()}
-                    className="mt-3 w-full resize-none rounded-[2px] border border-ink/15 bg-skin/40 p-3 text-[0.9375rem]"
+                    className="mt-3 w-full resize-none rounded-[3px] border border-skin/15 bg-ink-deep/60 p-3 text-[1rem] text-skin"
                   />
-                  <a
-                    href={site.instagramDmUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-3 inline-block underline underline-offset-4"
-                  >
+                  <a href={site.instagramDmUrl} target="_blank" rel="noopener noreferrer" className="ulink mt-3 inline-block">
                     Open the Instagram chat with @{site.handle}
                   </a>
                 </div>
